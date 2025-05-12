@@ -6,9 +6,18 @@
 <h1>Toate înregistrările medicale</h1>
 
 <form method="get">
-    <input type="text" name="q" placeholder="Caută după pacient" value="{{ query }}">
-    <button type="submit">Caută</button>
-</form>
+    <input type="text" name="q" placeholder="Caută pacient" value="{{ query }}">
+    <select name="studiu">
+      <option value="">Toate studiile</option>
+      {% for s in studii %}
+        <option value="{{ s.id }}" {% if s.id|stringformat:"s" == selected_studiu %}selected{% endif %}>
+          {{ s.titlu }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">Filtrează</button>
+  </form>
+  
 
 <ul>
     {% for inregistrare in inregistrari %}

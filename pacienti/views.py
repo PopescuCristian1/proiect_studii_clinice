@@ -5,6 +5,7 @@ from django.db import models
 from .models import Pacient, StudiuClinic, InregistrareMedicala
 from .forms import PacientForm, StudiuClinicForm, InregistrareMedicalaForm
 
+
 # Afiseaza homepage-ul
 def home(request):
     return render(request, 'home.html')
@@ -24,13 +25,32 @@ def adauga_pacient(request):
 # Listeaza toti pacientii sau filtreaza dupa nume/prenume
 def lista_pacienti(request):
     query = request.GET.get('q')
+    sex = request.GET.get('sex')
+    are_studii = request.GET.get('studii')
+
+    pacienti = Pacient.objects.all()
+
     if query:
-        pacienti = Pacient.objects.filter(
+        pacienti = pacienti.filter(
             models.Q(nume__icontains=query) | models.Q(prenume__icontains=query)
         )
-    else:
-        pacienti = Pacient.objects.all()
-    return render(request, 'pacienti/lista_pacienti.html', {'pacienti': pacienti, 'query': query})
+
+    if sex in ['M', 'F']:
+        pacienti = pacienti.filter(sex=sex)
+
+    if are_studii == 'cu':
+        pacienti = pacienti.filter(studii__isnull=False).distinct()
+    elif are_studii == 'fara':
+        pacienti = pacienti.filter(studii__isnull=True)
+
+    return render(request, 'pacienti/lista_pacienti.html', {
+        'pacienti': pacienti,
+        'query': query,
+        'selected_sex': sex,
+        'studii_filter': are_studii
+    })
+
+
 
 # Adauga un nou studiu clinic
 def adauga_studiu(request):
@@ -44,9 +64,34 @@ def adauga_studiu(request):
     return render(request, 'Studii/adauga_studiu.html', {'form': form})
 
 # Listeaza toate studiile clinice
+from datetime import date
+from django.db.models import Count, Q
+
 def lista_studii(request):
-    studii = StudiuClinic.objects.all()
-    return render(request, 'Studii/lista_studii.html', {'studii': studii})
+    query = request.GET.get("q")
+    min_pacienti = request.GET.get("min")
+    status = request.GET.get("status")
+
+    studii = StudiuClinic.objects.annotate(num_pacienti=Count('pacienti'))
+
+    if query:
+        studii = studii.filter(titlu__icontains=query)
+
+    if min_pacienti and min_pacienti.isdigit():
+        studii = studii.filter(num_pacienti__gte=int(min_pacienti))
+
+    if status == "active":
+        studii = studii.filter(Q(data_sfarsit__isnull=True) | Q(data_sfarsit__gte=date.today()))
+    elif status == "finalizate":
+        studii = studii.filter(data_sfarsit__lt=date.today())
+
+    return render(request, 'Studii/lista_studii.html', {
+        'studii': studii,
+        'query': query,
+        'min_pacienti': min_pacienti,
+        'status_filter': status
+    })
+
 
 # Adauga o inregistrare medicala (pacient + studiu + observatii)
 def adauga_inregistrare(request):
@@ -91,15 +136,6 @@ from django.shortcuts import get_object_or_404
 from .models import StudiuClinic
 from .forms import StudiuClinicForm
 
-# Lista studiilor + cautare
-def lista_studii(request):
-    query = request.GET.get("q")
-    if query:
-        studii = StudiuClinic.objects.filter(titlu__icontains=query)
-    else:
-        studii = StudiuClinic.objects.all()
-    return render(request, 'Studii/lista_studii.html', {'studii': studii, 'query': query})
-
 # Editarea unui studiu
 def editeaza_studiu(request, studiu_id):
     studiu = get_object_or_404(StudiuClinic, id=studiu_id)
@@ -116,14 +152,28 @@ def editeaza_studiu(request, studiu_id):
 # Lista inregistrarilor medicale + cautare
 def lista_inregistrari(request):
     query = request.GET.get('q')
+    studiu_id = request.GET.get('studiu')
+
+    inregistrari = InregistrareMedicala.objects.select_related('pacient', 'studiu').all()
+
     if query:
-        inregistrari = InregistrareMedicala.objects.select_related('pacient', 'studiu').filter(
-            models.Q(pacient__nume__icontains=query) | models.Q(pacient__prenume__icontains=query)
+        inregistrari = inregistrari.filter(
+            models.Q(pacient__nume__icontains=query) |
+            models.Q(pacient__prenume__icontains=query)
         )
-    else:
-        inregistrari = InregistrareMedicala.objects.select_related('pacient', 'studiu').all()
-    
-    return render(request, 'pacienti/lista_inregistrari.html', {'inregistrari': inregistrari, 'query': query})
+
+    if studiu_id and studiu_id.isdigit():
+        inregistrari = inregistrari.filter(studiu__id=studiu_id)
+
+    studii = StudiuClinic.objects.all()
+
+    return render(request, 'pacienti/lista_inregistrari.html', {
+        'inregistrari': inregistrari,
+        'query': query,
+        'studii': studii,
+        'selected_studiu': studiu_id
+    })
+
 
 # Editare inregistrare medicala
 def editeaza_inregistrare(request, inregistrare_id):

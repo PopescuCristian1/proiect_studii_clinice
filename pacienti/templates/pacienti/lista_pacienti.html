@@ -6,9 +6,23 @@
 <h1>Pacienți înregistrați</h1>
 
 <form method="get">
-    <input type="text" name="q" placeholder="Caută după nume sau prenume" value="{{ query }}">
-    <button type="submit">Caută</button>
+    <input type="text" name="q" placeholder="Caută după nume/prenume" value="{{ query }}">
+    
+    <select name="sex">
+        <option value="">Toți</option>
+        <option value="M" {% if selected_sex == 'M' %}selected{% endif %}>Masculin</option>
+        <option value="F" {% if selected_sex == 'F' %}selected{% endif %}>Feminin</option>
+    </select>
+    <select name="studii">
+        <option value="">Toți</option>
+        <option value="cu" {% if studii_filter == 'cu' %}selected{% endif %}>Doar cu studii</option>
+        <option value="fara" {% if studii_filter == 'fara' %}selected{% endif %}>Doar fără studii</option>
+    </select>
+    
+
+    <button type="submit">Filtrează</button>
 </form>
+
 
 {% if pacienti %}
     <ul>

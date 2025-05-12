@@ -5,13 +5,19 @@
 {% block content %}
 <h2>Lista studiilor clinice</h2>
 
+<form method="get">
+    <input type="text" name="q" placeholder="Caută după titlu" value="{{ query }}">
+    <button type="submit">Caută</button>
+</form>
+
 <ul>
   {% for studiu in studii %}
     <li>
       <strong>{{ studiu.titlu }}</strong><br>
       Început: {{ studiu.data_inceput }}{% if studiu.data_sfarsit %} – Sfârșit: {{ studiu.data_sfarsit }}{% endif %}<br>
       Descriere: {{ studiu.descriere }}<br>
-      Pacienți: {{ studiu.pacienti.count }}
+      Pacienți: {{ studiu.pacienti.count }}<br>
+      <a href="{% url 'editeaza_studiu' studiu.id %}">✏️ Editează</a>
     </li>
   {% empty %}
     <li>Nu există studii înregistrate.</li>

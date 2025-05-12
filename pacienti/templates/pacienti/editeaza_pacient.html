@@ -1,0 +1,13 @@
+{% extends 'back.html' %}
+
+{% block title %}Editează pacient{% endblock %}
+
+{% block content %}
+<h1>Editează pacient</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvează modificările</button>
+</form>
+<a href="{% url 'lista_pacienti' %}">Înapoi la lista pacienților</a>
+{% endblock %}

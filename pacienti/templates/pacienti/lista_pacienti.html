@@ -5,14 +5,22 @@
 {% block content %}
 <h1>Pacienți înregistrați</h1>
 
+<form method="get">
+    <input type="text" name="q" placeholder="Caută după nume sau prenume" value="{{ query }}">
+    <button type="submit">Caută</button>
+</form>
+
 {% if pacienti %}
     <ul>
         {% for pacient in pacienti %}
-            <li>{{ pacient.nume }} {{ pacient.prenume }} – {{ pacient.email }}</li>
+            <li>
+                {{ pacient.nume }} {{ pacient.prenume }} – {{ pacient.email }}
+                <a href="{% url 'editeaza_pacient' pacient.id %}">✏️ Editare</a>
+            </li>
         {% endfor %}
     </ul>
 {% else %}
-    <p>Nu există pacienți înregistrați.</p>
+    <p>Nu există pacienți care să corespundă căutării.</p>
 {% endif %}
 
 <a href="{% url 'adauga_pacient' %}">Adaugă pacient nou</a>

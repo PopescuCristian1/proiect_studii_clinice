@@ -1,0 +1,15 @@
+{% extends 'back.html' %}
+
+{% block title %}Editează Înregistrare{% endblock %}
+
+{% block content %}
+<h2>Editează Înregistrare Medicală</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvează modificările</button>
+</form>
+
+<a href="{% url 'lista_inregistrari' %}">Înapoi la listă</a>
+{% endblock %}

@@ -4,12 +4,19 @@
 
 {% block content %}
 <h1>Toate înregistrările medicale</h1>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Caută după pacient" value="{{ query }}">
+    <button type="submit">Caută</button>
+</form>
+
 <ul>
     {% for inregistrare in inregistrari %}
         <li>
             {{ inregistrare.pacient }} – {{ inregistrare.studiu }}<br>
             {{ inregistrare.data_inregistrarii }}<br>
-            Observații: {{ inregistrare.observatii }}
+            Observații: {{ inregistrare.observatii }}<br>
+            <a href="{% url 'editeaza_inregistrare' inregistrare.id %}">✏️ Editează</a>
         </li>
     {% empty %}
         <li>Nu există înregistrări.</li>

@@ -1,17 +1,5 @@
 from django.db import models
 
-class StudiuClinic(models.Model):
-    titlu = models.CharField(max_length=200)
-    descriere = models.TextField()
-    data_inceput = models.DateField()
-    data_sfarsit = models.DateField()
-
-    def __str__(self):
-        return self.titlu
-
-    class Meta:
-        verbose_name = "Studiu clinic"
-        verbose_name_plural = "Studii clinice"
 
 class Pacient(models.Model):
     SEX_OPTIUNI = [('M', 'Masculin'), ('F', 'Feminin')]
@@ -29,6 +17,20 @@ class Pacient(models.Model):
         verbose_name = "Pacient"
         verbose_name_plural = "Pacienți"
 
+class StudiuClinic(models.Model):
+    titlu = models.CharField(max_length=100)
+    descriere = models.TextField(blank=True)
+    data_inceput = models.DateField()
+    data_sfarsit = models.DateField(null=True, blank=True)
+    pacienti = models.ManyToManyField('Pacient', related_name='studii')
+
+    def __str__(self):
+        return self.titlu
+    class Meta:
+        verbose_name = "Studiu clinic"
+        verbose_name_plural = "Studii clinice"
+
+    
 class InregistrareMedicala(models.Model):
     pacient = models.ForeignKey(Pacient, on_delete=models.CASCADE)
     studiu = models.ForeignKey(StudiuClinic, on_delete=models.CASCADE)
@@ -41,3 +43,4 @@ class InregistrareMedicala(models.Model):
     class Meta:
         verbose_name = "Înregistrare medicală"
         verbose_name_plural = "Înregistrări medicale"
+

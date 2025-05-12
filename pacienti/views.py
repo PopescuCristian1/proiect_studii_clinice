@@ -20,3 +20,9 @@ from .models import Pacient
 def lista_pacienti(request):
     pacienti = Pacient.objects.all()
     return render(request, 'pacienti/lista_pacienti.html', {'pacienti': pacienti})
+
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'pacienti/home.html')
+

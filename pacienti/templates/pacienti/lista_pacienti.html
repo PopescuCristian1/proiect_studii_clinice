@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista pacienți</title>
+</head>
+<body>
+    <h1>Pacienți înregistrați</h1>
+
+    {% if pacienti %}
+        <ul>
+            {% for pacient in pacienti %}
+                <li>{{ pacient.nume }} {{ pacient.prenume }} – {{ pacient.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nu există pacienți înregistrați.</p>
+    {% endif %}
+
+    <a href="/pacienti/adauga/">Adaugă pacient nou</a>
+</body>
+</html>

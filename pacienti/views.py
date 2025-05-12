@@ -63,3 +63,14 @@ def adauga_inregistrare(request):
 def lista_inregistrari(request):
     inregistrari = InregistrareMedicala.objects.select_related('pacient', 'studiu').all()
     return render(request, 'pacienti/lista_inregistrari.html', {'inregistrari': inregistrari})
+
+
+from django.http import JsonResponse
+from .models import StudiuClinic
+
+def studii_pentru_pacient(request):
+    pacient_id = request.GET.get('pacient_id')
+    if pacient_id:
+        studii = StudiuClinic.objects.filter(pacienti__id=pacient_id).values('id', 'titlu')
+        return JsonResponse(list(studii), safe=False)
+    return JsonResponse([], safe=False)

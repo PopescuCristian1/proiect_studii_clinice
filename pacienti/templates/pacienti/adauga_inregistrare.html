@@ -6,9 +6,43 @@
 <h1>Adaugă Înregistrare Medicală</h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <p>{{ form.pacient.label_tag }} {{ form.pacient }}</p>
+    <p>{{ form.studiu.label_tag }} <select id="id_studiu" name="studiu"></select></p>
+    <p>{{ form.observatii.label_tag }} {{ form.observatii }}</p>
     <button type="submit">Salvează</button>
 </form>
 
 <a href="{% url 'lista_inregistrari' %}">Vezi toate înregistrările</a>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pacientSelect = document.getElementById('id_pacient');
+        const studiuSelect = document.getElementById('id_studiu');
+
+        pacientSelect.addEventListener('change', function () {
+            const pacientId = this.value;
+
+            fetch(`/pacienti/ajax/studii/?pacient_id=${pacientId}`)
+                .then(response => response.json())
+                .then(data => {
+                    studiuSelect.innerHTML = '';
+                    if (data.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.text = 'Niciun studiu disponibil';
+                        opt.disabled = true;
+                        opt.selected = true;
+                        studiuSelect.appendChild(opt);
+                        return;
+                    }
+
+                    data.forEach(studiu => {
+                        const option = document.createElement('option');
+                        option.value = studiu.id;
+                        option.text = studiu.titlu;
+                        studiuSelect.appendChild(option);
+                    });
+                });
+        });
+    });
+</script>
 {% endblock %}

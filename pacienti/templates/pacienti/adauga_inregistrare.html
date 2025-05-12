@@ -1,15 +1,14 @@
 {% extends 'back.html' %}
 
-{% block title %}Adaugă studiu{% endblock %}
+{% block title %}Adaugă Înregistrare{% endblock %}
 
 {% block content %}
-<h2>Adaugă studiu clinic</h2>
-
+<h1>Adaugă Înregistrare Medicală</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Salvează</button>
 </form>
 
-<a href="{% url 'lista_studii' %}">Vezi toate studiile</a>
+<a href="{% url 'lista_inregistrari' %}">Vezi toate înregistrările</a>
 {% endblock %}

@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <title>Adaugă pacient</title>
-</head>
-<body>
-    <h1>Formular pacient</h1>
+{% extends 'back.html' %}
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Salvează</button>
-    </form>
+{% block title %}Adaugă pacient{% endblock %}
 
-    <br>
-    <a href="/admin/">Înapoi la admin</a>
-</body>
-</html>
+{% block content %}
+<h1>Adaugă pacient</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvează</button>
+</form>
+<p><a href="{% url 'lista_pacienti' %}">Vezi toți pacienții</a></p>
+{% endblock %}

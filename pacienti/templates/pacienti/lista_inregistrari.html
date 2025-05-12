@@ -1,0 +1,20 @@
+{% extends 'back.html' %}
+
+{% block title %}Lista Înregistrări{% endblock %}
+
+{% block content %}
+<h1>Toate înregistrările medicale</h1>
+<ul>
+    {% for inregistrare in inregistrari %}
+        <li>
+            {{ inregistrare.pacient }} – {{ inregistrare.studiu }}<br>
+            {{ inregistrare.data_inregistrarii }}<br>
+            Observații: {{ inregistrare.observatii }}
+        </li>
+    {% empty %}
+        <li>Nu există înregistrări.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'adauga_inregistrare' %}">Adaugă o înregistrare</a>
+{% endblock %}

@@ -46,4 +46,20 @@ def lista_studii(request):
     return render(request, 'Studii/lista_studii.html', {'studii': studii})
 
 
+from .forms import InregistrareMedicalaForm
+from .models import InregistrareMedicala
 
+def adauga_inregistrare(request):
+    if request.method == 'POST':
+        form = InregistrareMedicalaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_inregistrari')
+    else:
+        form = InregistrareMedicalaForm()
+    
+    return render(request, 'pacienti/adauga_inregistrare.html', {'form': form})
+
+def lista_inregistrari(request):
+    inregistrari = InregistrareMedicala.objects.select_related('pacient', 'studiu').all()
+    return render(request, 'pacienti/lista_inregistrari.html', {'inregistrari': inregistrari})

@@ -14,3 +14,11 @@ class StudiuClinicForm(forms.ModelForm):
         model = StudiuClinic
         fields = ['titlu', 'descriere', 'data_inceput', 'data_sfarsit', 'pacienti']
 
+from django import forms
+from .models import InregistrareMedicala
+
+class InregistrareMedicalaForm(forms.ModelForm):
+    class Meta:
+        model = InregistrareMedicala
+        fields = ['pacient', 'studiu', 'observatii']
+

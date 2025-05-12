@@ -1,3 +1,8 @@
+{% extends 'back.html' %}
+
+{% block title %}Lista Studii{% endblock %}
+
+{% block content %}
 <h2>Lista studiilor clinice</h2>
 
 <ul>
@@ -14,3 +19,4 @@
 </ul>
 
 <a href="{% url 'adauga_studiu' %}">Adaugă studiu nou</a>
+{% endblock %}

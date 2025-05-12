@@ -1,0 +1,9 @@
+<h2>Adaugă studiu clinic</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvează</button>
+</form>
+
+<a href="{% url 'lista_studii' %}">Vezi toate studiile</a>

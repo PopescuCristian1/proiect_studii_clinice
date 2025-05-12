@@ -1,0 +1,16 @@
+<h2>Lista studiilor clinice</h2>
+
+<ul>
+  {% for studiu in studii %}
+    <li>
+      <strong>{{ studiu.titlu }}</strong><br>
+      Început: {{ studiu.data_inceput }}{% if studiu.data_sfarsit %} – Sfârșit: {{ studiu.data_sfarsit }}{% endif %}<br>
+      Descriere: {{ studiu.descriere }}<br>
+      Pacienți: {{ studiu.pacienti.count }}
+    </li>
+  {% empty %}
+    <li>Nu există studii înregistrate.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'adauga_studiu' %}">Adaugă studiu nou</a>

@@ -24,5 +24,26 @@ def lista_pacienti(request):
 from django.shortcuts import render
 
 def home(request):
-    return render(request, 'pacienti/home.html')
+    return render(request, 'home.html')
+
+from django.shortcuts import render, redirect
+from .forms import StudiuClinicForm
+
+def adauga_studiu(request):
+    if request.method == 'POST':
+        form = StudiuClinicForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_studii')
+    else:
+        form = StudiuClinicForm()
+    return render(request, 'Studii/adauga_studiu.html', {'form': form})
+
+from .models import StudiuClinic
+
+def lista_studii(request):
+    studii = StudiuClinic.objects.all()
+    return render(request, 'Studii/lista_studii.html', {'studii': studii})
+
+
 

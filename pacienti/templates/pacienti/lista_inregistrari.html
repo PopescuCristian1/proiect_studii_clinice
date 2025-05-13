@@ -3,34 +3,43 @@
 {% block title %}Lista Înregistrări{% endblock %}
 
 {% block content %}
-<h1>Toate înregistrările medicale</h1>
+<div class="container mt-5">
+    <h2 class="mb-4">Înregistrări medicale</h2>
 
-<form method="get">
-    <input type="text" name="q" placeholder="Caută pacient" value="{{ query }}">
-    <select name="studiu">
-      <option value="">Toate studiile</option>
-      {% for s in studii %}
-        <option value="{{ s.id }}" {% if s.id|stringformat:"s" == selected_studiu %}selected{% endif %}>
-          {{ s.titlu }}
-        </option>
-      {% endfor %}
-    </select>
-    <button type="submit">Filtrează</button>
-  </form>
-  
+    <form method="get" class="row g-3 align-items-center mb-4">
+        <div class="col-md-5">
+            <input type="text" name="q" class="form-control" placeholder="Caută după pacient" value="{{ query }}">
+        </div>
+        <div class="col-md-5">
+            <select name="studiu" class="form-select">
+                <option value="">Toate studiile</option>
+                {% for s in studii %}
+                    <option value="{{ s.id }}" {% if s.id|stringformat:"s" == selected_studiu %}selected{% endif %}>
+                        {{ s.titlu }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrează</button>
+        </div>
+    </form>
 
-<ul>
-    {% for inregistrare in inregistrari %}
-        <li>
-            {{ inregistrare.pacient }} – {{ inregistrare.studiu }}<br>
-            {{ inregistrare.data_inregistrarii }}<br>
-            Observații: {{ inregistrare.observatii }}<br>
-            <a href="{% url 'editeaza_inregistrare' inregistrare.id %}">✏️ Editează</a>
-        </li>
-    {% empty %}
-        <li>Nu există înregistrări.</li>
-    {% endfor %}
-</ul>
+    {% if inregistrari %}
+        <ul class="list-group mb-4">
+            {% for inregistrare in inregistrari %}
+                <li class="list-group-item">
+                    <strong>{{ inregistrare.pacient }}</strong> – {{ inregistrare.studiu }}<br>
+                    <small class="text-muted">Data: {{ inregistrare.data_inregistrarii }}</small><br>
+                    Observații: {{ inregistrare.observatii|default:"—" }}<br>
+                    <a href="{% url 'editeaza_inregistrare' inregistrare.id %}" class="btn btn-sm btn-outline-secondary mt-2">✏️ Editează</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">Nu există înregistrări care să corespundă filtrării.</div>
+    {% endif %}
 
-<a href="{% url 'adauga_inregistrare' %}">Adaugă o înregistrare</a>
+    <a href="{% url 'adauga_inregistrare' %}" class="btn btn-success">➕ Adaugă înregistrare nouă</a>
+</div>
 {% endblock %}

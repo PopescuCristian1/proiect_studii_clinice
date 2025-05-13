@@ -3,36 +3,44 @@
 {% block title %}Lista Studii{% endblock %}
 
 {% block content %}
-<h2>Lista studiilor clinice</h2>
+<div class="container mt-5">
+    <h2 class="mb-4">Lista studiilor clinice</h2>
 
-<form method="get">
-  <input type="text" name="q" placeholder="Caută după titlu" value="{{ query }}">
+    <form method="get" class="row g-3 align-items-center mb-4">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Caută după titlu" value="{{ query }}">
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="min" class="form-control" placeholder="Nr. minim pacienți" value="{{ min_pacienti }}">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">Toate</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="finalizate" {% if status_filter == 'finalizate' %}selected{% endif %}>Finalizate</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrează</button>
+        </div>
+    </form>
 
-  <input type="number" name="min" placeholder="Nr. minim pacienți" value="{{ min_pacienti }}">
+    {% if studii %}
+        <div class="list-group mb-4">
+            {% for studiu in studii %}
+                <div class="list-group-item">
+                    <h5 class="mb-1">{{ studiu.titlu }}</h5>
+                    <p class="mb-1">Început: {{ studiu.data_inceput }}{% if studiu.data_sfarsit %} – Sfârșit: {{ studiu.data_sfarsit }}{% endif %}</p>
+                    <p class="mb-1">Descriere: {{ studiu.descriere }}</p>
+                    <p class="mb-1">Pacienți: {{ studiu.num_pacienti }}</p>
+                    <a href="{% url 'editeaza_studiu' studiu.id %}" class="btn btn-sm btn-outline-secondary">✏️ Editează</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">Nu există studii care să corespundă filtrării.</div>
+    {% endif %}
 
-  <select name="status">
-      <option value="">Toate</option>
-      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
-      <option value="finalizate" {% if status_filter == 'finalizate' %}selected{% endif %}>Finalizate</option>
-  </select>
-
-  <button type="submit">Filtrează</button>
-</form>
-
-
-<ul>
-  {% for studiu in studii %}
-    <li>
-      <strong>{{ studiu.titlu }}</strong><br>
-      Început: {{ studiu.data_inceput }}{% if studiu.data_sfarsit %} – Sfârșit: {{ studiu.data_sfarsit }}{% endif %}<br>
-      Descriere: {{ studiu.descriere }}<br>
-      Pacienți: {{ studiu.num_pacienti }}<br>
-      <a href="{% url 'editeaza_studiu' studiu.id %}">✏️ Editează</a>
-    </li>
-  {% empty %}
-    <li>Nu există studii înregistrate.</li>
-  {% endfor %}
-</ul>
-
-<a href="{% url 'adauga_studiu' %}">Adaugă studiu nou</a>
+    <a href="{% url 'adauga_studiu' %}" class="btn btn-success">➕ Adaugă studiu nou</a>
+</div>
 {% endblock %}

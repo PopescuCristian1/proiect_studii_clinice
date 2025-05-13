@@ -1,19 +1,21 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <title>Pagina principală</title>
-</head>
-<body>
-    <h1>Bine ai venit!</h1>
+{% extends 'back.html' %}
 
-    <ul>
-        <li><a href="{% url 'adauga_pacient' %}">Adaugă pacient</a></li>
-        <li><a href="{% url 'lista_pacienti' %}">Vezi pacienți</a></li>
-        <li><a href="{% url 'adauga_studiu' %}">Adaugă studiu clinic</a></li>
-        <li><a href="{% url 'lista_studii' %}">Vezi studii clinice</a></li>
-        <li><a href="{% url 'adauga_inregistrare' %}">Adaugă înregistrare medicală</a></li>
-        <li><a href="{% url 'lista_inregistrari' %}">Vezi înregistrări medicale</a></li>
-    </ul>
-</body>
-</html>
+{% block title %}Acasă{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="mb-4">👋 Bine ai venit!</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="list-group">
+                <a href="{% url 'adauga_pacient' %}" class="list-group-item list-group-item-action">➕ Adaugă pacient</a>
+                <a href="{% url 'lista_pacienti' %}" class="list-group-item list-group-item-action">📋 Vezi pacienți</a>
+                <a href="{% url 'adauga_studiu' %}" class="list-group-item list-group-item-action">➕ Adaugă studiu clinic</a>
+                <a href="{% url 'lista_studii' %}" class="list-group-item list-group-item-action">📊 Vezi studii clinice</a>
+                <a href="{% url 'adauga_inregistrare' %}" class="list-group-item list-group-item-action">➕ Adaugă înregistrare medicală</a>
+                <a href="{% url 'lista_inregistrari' %}" class="list-group-item list-group-item-action">📁 Vezi înregistrări medicale</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,39 +3,48 @@
 {% block title %}Lista Pacienți{% endblock %}
 
 {% block content %}
-<h1>Pacienți înregistrați</h1>
+<div class="container mt-5">
+    <h2 class="mb-4">Pacienți înregistrați</h2>
 
-<form method="get">
-    <input type="text" name="q" placeholder="Caută după nume/prenume" value="{{ query }}">
-    
-    <select name="sex">
-        <option value="">Toți</option>
-        <option value="M" {% if selected_sex == 'M' %}selected{% endif %}>Masculin</option>
-        <option value="F" {% if selected_sex == 'F' %}selected{% endif %}>Feminin</option>
-    </select>
-    <select name="studii">
-        <option value="">Toți</option>
-        <option value="cu" {% if studii_filter == 'cu' %}selected{% endif %}>Doar cu studii</option>
-        <option value="fara" {% if studii_filter == 'fara' %}selected{% endif %}>Doar fără studii</option>
-    </select>
-    
+    <form method="get" class="row g-3 align-items-center mb-4">
+        <div class="col-auto">
+            <input type="text" name="q" class="form-control" placeholder="Caută după nume/prenume" value="{{ query }}">
+        </div>
+        <div class="col-auto">
+            <select name="sex" class="form-select">
+                <option value="">Sex</option>
+                <option value="M" {% if selected_sex == 'M' %}selected{% endif %}>Masculin</option>
+                <option value="F" {% if selected_sex == 'F' %}selected{% endif %}>Feminin</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="studii" class="form-select">
+                <option value="">Toți</option>
+                <option value="cu" {% if studii_filter == 'cu' %}selected{% endif %}>Cu studii</option>
+                <option value="fara" {% if studii_filter == 'fara' %}selected{% endif %}>Fără studii</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filtrează</button>
+        </div>
+    </form>
 
-    <button type="submit">Filtrează</button>
-</form>
+    {% if pacienti %}
+        <ul class="list-group mb-4">
+            {% for pacient in pacienti %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ pacient.nume }} {{ pacient.prenume }}</strong><br>
+                        {{ pacient.email }}
+                    </div>
+                    <a href="{% url 'editeaza_pacient' pacient.id %}" class="btn btn-sm btn-outline-secondary">✏️ Editare</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">Nu există pacienți care să corespundă căutării.</div>
+    {% endif %}
 
-
-{% if pacienti %}
-    <ul>
-        {% for pacient in pacienti %}
-            <li>
-                {{ pacient.nume }} {{ pacient.prenume }} – {{ pacient.email }}
-                <a href="{% url 'editeaza_pacient' pacient.id %}">✏️ Editare</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Nu există pacienți care să corespundă căutării.</p>
-{% endif %}
-
-<a href="{% url 'adauga_pacient' %}">Adaugă pacient nou</a>
+    <a href="{% url 'adauga_pacient' %}" class="btn btn-success">➕ Adaugă pacient nou</a>
+</div>
 {% endblock %}

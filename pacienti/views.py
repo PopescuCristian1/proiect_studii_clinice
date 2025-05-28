@@ -186,3 +186,54 @@ def editeaza_inregistrare(request, inregistrare_id):
     else:
         form = InregistrareMedicalaForm(instance=inregistrare)
     return render(request, 'pacienti/editeaza_inregistrare.html', {'form': form})
+
+from django.db.models import Count, Avg
+from datetime import date
+
+def dashboard(request):
+    total_pacienti = Pacient.objects.count()
+    total_studii = StudiuClinic.objects.count()
+    total_inregistrari = InregistrareMedicala.objects.count()
+
+    studii_active = StudiuClinic.objects.filter(data_sfarsit__isnull=True).count()
+    studii_finalizate = StudiuClinic.objects.filter(data_sfarsit__lt=date.today()).count()
+
+    medie_pacienti = StudiuClinic.objects.annotate(num=Count('pacienti')).aggregate(avg=Avg('num'))['avg'] or 0
+
+    context = {
+        'total_pacienti': total_pacienti,
+        'total_studii': total_studii,
+        'total_inregistrari': total_inregistrari,
+        'studii_active': studii_active,
+        'studii_finalizate': studii_finalizate,
+        'medie_pacienti': round(medie_pacienti, 2),
+    }
+
+    return render(request, 'dashboard.html', context)
+
+from django.shortcuts import render
+from .models import Pacient, StudiuClinic, InregistrareMedicala
+from django.db.models import Avg
+from datetime import date
+
+def dashboard(request):
+    pacienti = Pacient.objects.count()
+    studii = StudiuClinic.objects.count()
+    inregistrari = InregistrareMedicala.objects.count()
+    active = StudiuClinic.objects.filter(
+    Q(data_sfarsit__isnull=True) | Q(data_sfarsit__gte=date.today())).count()
+    finalizate = StudiuClinic.objects.filter(data_sfarsit__lt=date.today()).count()
+    
+    media = StudiuClinic.objects.annotate(nr=models.Count('pacienti')).aggregate(avg=Avg('nr'))['avg']
+
+    context = {
+        'pacienti': pacienti,
+        'studii': studii,
+        'inregistrari': inregistrari,
+        'active': active,
+        'finalizate': finalizate,
+        'media': media or 0,
+    }
+
+    return render(request, 'dashboard.html', context)
+

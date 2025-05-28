@@ -1,0 +1,25 @@
+{% extends 'back.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <i class="bi bi-bar-chart-fill me-2"></i>
+            <h4 class="mb-0">Dashboard</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Pacienți:</strong> {{ pacienti }}</li>
+                <li class="list-group-item"><strong>Studii clinice:</strong> {{ studii }}</li>
+<li class="list-group-item"><strong>Înregistrări medicale:</strong> {{ inregistrari }}</li>
+<li class="list-group-item text-success"><strong>Studii active:</strong> {{ active }}</li>
+<li class="list-group-item text-danger"><strong>Studii finalizate:</strong> {{ finalizate }}</li>
+<li class="list-group-item"><strong>Media pacienților per studiu:</strong> {{ media|floatformat:2 }}</li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

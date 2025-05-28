@@ -3,46 +3,61 @@
 {% block title %}Adaugă Înregistrare{% endblock %}
 
 {% block content %}
-<h1>Adaugă Înregistrare Medicală</h1>
-<form method="post">
-    {% csrf_token %}
-    <p>{{ form.pacient.label_tag }} {{ form.pacient }}</p>
-    <p>{{ form.studiu.label_tag }} <select id="id_studiu" name="studiu"></select></p>
-    <p>{{ form.observatii.label_tag }} {{ form.observatii }}</p>
-    <button type="submit">Salvează</button>
-</form>
-
-<a href="{% url 'lista_inregistrari' %}">Vezi toate înregistrările</a>
+<div class="container mt-4">
+    <h2>Adaugă Înregistrare Medicală</h2>
+    <form method="post" class="border p-4 rounded bg-light">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.pacient.label_tag }} 
+            {{ form.pacient }}
+        </div>
+        <div class="mb-3">
+            <label for="id_studiu">Studiu:</label>
+            <select id="id_studiu" name="studiu" class="form-select"></select>
+        </div>
+        <div class="mb-3">
+            {{ form.observatii.label_tag }}
+            {{ form.observatii }}
+        </div>
+        <button type="submit" class="btn btn-primary">Salvează</button>
+    </form>
+    <a href="{% url 'lista_inregistrari' %}" class="btn btn-link mt-3">Vezi toate înregistrările</a>
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const pacientSelect = document.getElementById('id_pacient');
-        const studiuSelect = document.getElementById('id_studiu');
+document.addEventListener('DOMContentLoaded', function () {
+    const pacientSelect = document.getElementById('id_pacient');
+    const studiuSelect = document.getElementById('id_studiu');
 
-        pacientSelect.addEventListener('change', function () {
-            const pacientId = this.value;
-
-            fetch(`/pacienti/ajax/studii/?pacient_id=${pacientId}`)
-                .then(response => response.json())
-                .then(data => {
-                    studiuSelect.innerHTML = '';
-                    if (data.length === 0) {
-                        const opt = document.createElement('option');
-                        opt.text = 'Niciun studiu disponibil';
-                        opt.disabled = true;
-                        opt.selected = true;
-                        studiuSelect.appendChild(opt);
-                        return;
-                    }
-
+    function incarcaStudii(pacientId) {
+        fetch(`/pacienti/ajax/studii/?pacient_id=${pacientId}`)
+            .then(response => response.json())
+            .then(data => {
+                studiuSelect.innerHTML = '';
+                if (data.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.text = 'Niciun studiu disponibil';
+                    opt.disabled = true;
+                    opt.selected = true;
+                    studiuSelect.appendChild(opt);
+                } else {
                     data.forEach(studiu => {
                         const option = document.createElement('option');
                         option.value = studiu.id;
                         option.text = studiu.titlu;
                         studiuSelect.appendChild(option);
                     });
-                });
-        });
+                }
+            });
+    }
+
+    if (pacientSelect.value) {
+        incarcaStudii(pacientSelect.value);
+    }
+
+    pacientSelect.addEventListener('change', function () {
+        incarcaStudii(this.value);
     });
+});
 </script>
 {% endblock %}

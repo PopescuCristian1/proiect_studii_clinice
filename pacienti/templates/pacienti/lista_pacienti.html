@@ -26,6 +26,7 @@
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary">Filtrează</button>
+                                <a href="{% url 'exporta_pacienti_pdf' %}" class="btn btn-outline-primary ms-2"> 🗎 Exportă în PDF</a>
         </div>
     </form>
 
@@ -38,6 +39,7 @@
                         {{ pacient.email }}
                     </div>
                     <a href="{% url 'editeaza_pacient' pacient.id %}" class="btn btn-sm btn-outline-secondary">✏️ Editare</a>
+                    
                 </li>
             {% endfor %}
         </ul>

@@ -237,3 +237,142 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', context)
 
+#pdf lista pacienti
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from .models import Pacient
+
+def exporta_pacienti_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="lista_pacienti.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    elements.append(Paragraph("Lista pacienților", styles['Title']))
+    elements.append(Spacer(1, 12))
+
+    data = [['Nume complet', 'Email']]
+    pacienti = Pacient.objects.all()
+    for p in pacienti:
+        data.append([f"{p.nume} {p.prenume}", p.email])
+
+    table = Table(data, colWidths=[250, 250])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0d6efd')),  # albastru Bootstrap
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.lightgrey]),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+
+    return response
+
+#pdf lista studii
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from .models import StudiuClinic
+
+def exporta_studii_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="lista_studii.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    elements = []
+
+    styles = getSampleStyleSheet()
+    elements.append(Paragraph("Lista studiilor clinice", styles['Title']))
+    elements.append(Spacer(1, 12))
+
+    # Antete
+    data = [["Titlu", "Descriere", "Început", "Sfârșit", "Nr. pacienți"]]
+
+    studii = StudiuClinic.objects.all()
+    for studiu in studii:
+        data.append([
+            studiu.titlu,
+            studiu.descriere,
+            studiu.data_inceput.strftime('%Y-%m-%d'),
+            studiu.data_sfarsit.strftime('%Y-%m-%d') if studiu.data_sfarsit else "—",
+            studiu.pacienti.count()
+        ])
+
+    table = Table(data, colWidths=[90, 160, 70, 70, 60])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0d6efd')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+
+    return response
+
+#pdf inregistrari medicale
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+from django.http import HttpResponse
+from .models import InregistrareMedicala
+
+def exporta_inregistrari_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="inregistrari_medicale.pdf"'
+
+    p = canvas.Canvas(response, pagesize=A4)
+    width, height = A4
+
+    p.setFont("Helvetica-Bold", 16)
+    p.drawCentredString(width / 2, height - 50, "Lista înregistrărilor medicale")
+
+    # Tabel de date
+    data = [["Pacient", "Studiu", "Observații"]]
+    for inregistrare in InregistrareMedicala.objects.select_related("pacient", "studiu"):
+        data.append([
+            str(inregistrare.pacient),
+            str(inregistrare.studiu),
+            inregistrare.observatii or ""
+        ])
+
+    table = Table(data, colWidths=[170, 170, 170])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0d6efd")),  # albastru Bootstrap
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ]))
+
+    # Poziționare tabel
+    table.wrapOn(p, width, height)
+    table.drawOn(p, 50, height - 100 - (30 * len(data)))
+
+    p.showPage()
+    p.save()
+
+    return response
+
+
+
+
+

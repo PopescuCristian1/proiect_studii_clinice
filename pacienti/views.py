@@ -344,7 +344,6 @@ def exporta_inregistrari_pdf(request):
     p.setFont("Helvetica-Bold", 16)
     p.drawCentredString(width / 2, height - 50, "Lista înregistrărilor medicale")
 
-    # Tabel de date
     data = [["Pacient", "Studiu", "Observații"]]
     for inregistrare in InregistrareMedicala.objects.select_related("pacient", "studiu"):
         data.append([
@@ -355,7 +354,7 @@ def exporta_inregistrari_pdf(request):
 
     table = Table(data, colWidths=[170, 170, 170])
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0d6efd")),  # albastru Bootstrap
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0d6efd")),  
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -363,7 +362,6 @@ def exporta_inregistrari_pdf(request):
         ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
     ]))
 
-    # Poziționare tabel
     table.wrapOn(p, width, height)
     table.drawOn(p, 50, height - 100 - (30 * len(data)))
 
